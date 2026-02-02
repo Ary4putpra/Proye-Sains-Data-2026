@@ -35,9 +35,11 @@ st.dataframe(df.head())
 # BERSIHKAN DATA KOORDINAT
 # ===============================
 df = df.dropna(subset=["LATITUDE", "LONGITUDE"])
+st.write(center_lat, center_lon)
 
-center_lat = df["LATITUDE"].mean()
-center_lon = df["LONGITUDE"].mean()
+center_lat = df_map["LATITUDE"].mean()
+center_lon = df_map["LONGITUDE"].mean()
+
 
 # ===============================
 # BAR CHART – JUMLAH KEBAKARAN PER STATE
@@ -59,6 +61,8 @@ fig_bar = px.bar(
 )
 
 st.plotly_chart(fig_bar, use_container_width=True)
+st.write("Jumlah data setelah drop NA:", len(df))
+
 
 # ===============================
 # PIE CHART – PENYEBAB KEBAKARAN
@@ -81,12 +85,18 @@ st.plotly_chart(fig_pie, use_container_width=True)
 # ===============================
 # PETA MARKER CLUSTER (FOLIUM)
 # ===============================
-st.subheader("🗺️ Peta Lokasi Kebakaran (Marker Cluster)")
+st.subheader("🗺️ Peta Lokasi Kebakaran")
+
+# Bersihkan & batasi data
+df_map = df.dropna(subset=["LATITUDE", "LONGITUDE"]).sample(3000, random_state=42)
+
+center_lat = df_map["LATITUDE"].mean()
+center_lon = df_map["LONGITUDE"].mean()
 
 m = folium.Map(location=[center_lat, center_lon], zoom_start=5)
 marker_cluster = MarkerCluster().add_to(m)
 
-for _, row in df.iterrows():
+for _, row in df_map.iterrows():
     folium.Marker(
         location=[row["LATITUDE"], row["LONGITUDE"]],
         popup=(
@@ -139,3 +149,7 @@ folium.Choropleth(
 st_folium(m2, width=1000, height=600)
 
 st.caption("📌 Sumber data: Wildfires 2012 Dataset")
+
+m_test = folium.Map(location=[37, -95], zoom_start=4)
+st_folium(m_test, width=800, height=500)
+
