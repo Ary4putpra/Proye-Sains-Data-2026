@@ -35,7 +35,6 @@ st.dataframe(df.head())
 # BERSIHKAN DATA KOORDINAT
 # ===============================
 df = df.dropna(subset=["LATITUDE", "LONGITUDE"])
-st.write(center_lat, center_lon)
 
 center_lat = df_map["LATITUDE"].mean()
 center_lon = df_map["LONGITUDE"].mean()
